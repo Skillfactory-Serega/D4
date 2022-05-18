@@ -1,13 +1,15 @@
-from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Sum, DateTimeField
+from django.db import models
+from django.db.models import Sum
 from django.urls import reverse
 
 
 # Create your models here.
 class Author(models.Model):
-    authorUser = models.OneToOneField(User, on_delete= models.CASCADE)
+    authorUser = models.OneToOneField(User, on_delete=models.CASCADE)
     ratingAuthor = models.SmallIntegerField(default=0)
+
+
 
     def __str__(self):
         return str(self.authorUser)
@@ -36,7 +38,7 @@ class Category(models.Model):
 
 
 class Post(models.Model):
-    author = models.ForeignKey('Author', on_delete=models.CASCADE,null=True, verbose_name = 'Автор')
+    author = models.ForeignKey('Author', on_delete=models.CASCADE, null=True, verbose_name='Автор')
 
     NEWS = 'NW'
     ARTICLE = 'AR'
@@ -44,17 +46,15 @@ class Post(models.Model):
         (NEWS, 'Новость'),
         (ARTICLE, 'Статья'),
     )
-    categoryType = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=ARTICLE, verbose_name = 'Тип публикации')
-    dateCreation = models.DateTimeField(null=True, blank=True, verbose_name = 'дата')
+    categoryType = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=ARTICLE, verbose_name='Тип публикации')
+    dateCreation = models.DateTimeField(null=True, blank=True, verbose_name='дата')
     #date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    postCategory = models.ManyToManyField('Category', through='PostCategory',blank=True, verbose_name='Категория')
-    title = models.CharField(max_length=128, verbose_name = 'Заголовок')
-    text = models.TextField(default=0, verbose_name = 'Текст')
-    rating = models.SmallIntegerField(default=0, verbose_name = 'Рэйтинг')
-    #images = models.ImageField(default=0, upload_to='images/', verbose_name = 'Изображение')
+    postCategory = models.ManyToManyField('Category', through='PostCategory', blank=True, verbose_name='Категория')
+    title = models.CharField(max_length=128, verbose_name='Заголовок')
+    text = models.TextField(default=0, verbose_name='Текст')
+    rating = models.SmallIntegerField(default=0, verbose_name='Рэйтинг')
+    #image = models.ImageField(default=0, upload_to='users/%Y/%m/%d/', verbose_name='Изображение')
     #related_name = 'post'
-
-
 
     def __str__(self):
         return self.text

@@ -3,10 +3,25 @@ from django.urls import reverse_lazy
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
-
+from django.shortcuts import render
 from .forms import PostForm
 from .models import Post
 from .filters import PostFilter
+
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
+def image_upload_view(request):
+    """Process images uploaded by users"""
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            # Get the current instance object to display in the template
+            img_obj = form.instance
+            return render(request, 'post.html', {'form': form, 'img_obj': img_obj})
+    else:
+        form = PostForm()
+    return render(request, 'post.html', {'form': form})
 
 
 class PostList(ListView):
@@ -84,7 +99,8 @@ class PostDetail(DetailView):
     context_object_name = 'post'
 
 # Добавляем новое представление для создания Новостей.
-class PostCreate(CreateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_Post',)
     # Указываем нашу разработанную форму
     form_class = PostForm
     # модель Новостей
@@ -98,14 +114,15 @@ class PostCreate(CreateView):
         return super().form_valid(form)
 
 # Добавляем представление для изменения Новости.
-class PostUpdate(UpdateView):
+class PostUpdate(PermissionRequiredMixin,UpdateView):
+    permission_required = ('news.change_Post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
 
 # Представление удаляющее Новость.
-class PostDelete(DeleteView):
+class PostDelete(PermissionRequiredMixin,DeleteView):
+    permission_required = ('news.delete_Post',)
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
-

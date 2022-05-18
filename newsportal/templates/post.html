@@ -8,6 +8,7 @@ News
 
 <!-- В контенте на странице мы выводим сам пост, идентификатор которого был передан в url -->
 {% block content %}
+<p align="centr"><img src="{{ post.image.url }}" style="max-height:300px"></p>
 <p><b><font size="5" color="red" ><ins>{{ post.title }}</ins></font></b></p>
 <hr>
 <p>{{ post.text }}</p>
